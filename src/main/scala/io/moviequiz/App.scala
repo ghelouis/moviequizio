@@ -12,6 +12,18 @@ object App:
 
   private val movies = List(
     Movie("bound-(1996)", "Bound (1996)"),
+    Movie("bound-(1996)", "Bound1 (1996)"),
+    Movie("bound-(1996)", "Bound2 (1996)"),
+    Movie("bound-(1996)", "Bound3 (1996)"),
+    Movie("bound-(1996)", "Bound1 (1996)"),
+    Movie("bound-(1996)", "Bound2 (1996)"),
+    Movie("bound-(1996)", "Bound3 (1996)"),
+    Movie("bound-(1996)", "Bound1 (1996)"),
+    Movie("bound-(1996)", "Bound2 (1996)"),
+    Movie("bound-(1996)", "Bound3 (1996)"),
+    Movie("bound-(1996)", "Bound1 (1996)"),
+    Movie("bound-(1996)", "Bound2 (1996)"),
+    Movie("bound-(1996)", "Bound3 (1996)"),
     Movie("le-roi-lion-(1994)", "Le Roi Lion (1994)"),
     Movie("never-back-down-(2008)", "Never Back Down 2008)"),
     Movie("the-guest-(2014)", "The Guest (2014)")
@@ -35,7 +47,7 @@ object App:
   private def setupUI(): Unit =
     val title = document.createElement("h1").asInstanceOf[html.Heading]
     title.textContent = "MovieQuiz.io"
-    title.classList.add("big")
+    title.classList.add("title")
     document.body.appendChild(title)
 
     val button = dom.document.createElement("button").asInstanceOf[html.Button]
@@ -86,16 +98,26 @@ object App:
   private def addGuessBox(): Unit =
     val container = document.createElement("div")
     container.classList.add("suggestion-container")
+
     val input = document.createElement("input").asInstanceOf[html.Input]
     input.placeholder = "Guess the movie..."
+
+    val clearBtn = document.createElement("span").asInstanceOf[html.Span]
+    clearBtn.title = "Clear"
+    clearBtn.classList.add("clear-btn")
+    clearBtn.innerHTML = "&times;"
+
     val suggestions = document.createElement("ul").asInstanceOf[html.UList]
     container.appendChild(input)
+    container.appendChild(clearBtn)
     container.appendChild(suggestions)
     document.body.appendChild(container)
 
     var filtered = Seq.empty[String]
 
     def renderList(): Unit =
+      if filtered.isEmpty then input.classList.remove("has-suggestions")
+      else input.classList.add("has-suggestions")
       suggestions.innerHTML = ""
       filtered.foreach { movieName =>
         val li = document.createElement("li").asInstanceOf[html.LI]
@@ -107,13 +129,16 @@ object App:
 
     def selectValue(value: String): Unit =
       input.value = value
-      suggestions.innerHTML = ""
+      filtered = List.empty[String]
+      renderList()
 
     input.addEventListener(
       "input",
       (_: dom.Event) =>
+        if input.value.nonEmpty then clearBtn.style.display = "block"
+        else clearBtn.style.display = "none"
         if input.value.length > 2 then
-          filtered = movieNames.filter(_.toLowerCase.contains(input.value.toLowerCase))
+          filtered = movieNames.filter(_.toLowerCase.contains(input.value.toLowerCase)).take(7)
         else filtered = List.empty[String]
         renderList()
     )
@@ -125,6 +150,28 @@ object App:
           e.preventDefault()
           selectValue(filtered.head)
     )
+
+    input.addEventListener(
+      "blur",
+      (_: dom.Event) =>
+        dom.window.setTimeout(
+          () =>
+            filtered = List.empty[String]
+            renderList()
+          ,
+          150
+        )
+    )
+
+    clearBtn.addEventListener(
+      "click",
+      (_: dom.Event) =>
+        input.value = ""
+        clearBtn.style.display = "none"
+        input.focus()
+    )
+
+    input.focus()
 
   private def getRandomMovie: Movie =
     var index = rand.nextInt(movies.size)
