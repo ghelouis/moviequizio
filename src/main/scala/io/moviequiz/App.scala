@@ -36,7 +36,7 @@ object App:
   private var picked = Set.empty[Int]
 
   def main(args: Array[String]): Unit =
-    println("Welcome to Movie Quiz!")
+    println("Welcome to MovieQuiz.io!")
     document.addEventListener(
       "DOMContentLoaded",
       { (e: dom.Event) =>
@@ -114,10 +114,17 @@ object App:
     document.body.appendChild(container)
 
     var filtered = Seq.empty[String]
+    var indexHighlighted: Option[Int] = None
 
     def renderList(): Unit =
       if filtered.isEmpty then input.classList.remove("has-suggestions")
       else input.classList.add("has-suggestions")
+
+      if indexHighlighted.isDefined then
+        val items = suggestions.getElementsByTagName("li")
+        items(indexHighlighted.get).classList.remove("highlighted")
+        indexHighlighted = None
+
       suggestions.innerHTML = ""
       filtered.foreach { movieName =>
         val li = document.createElement("li").asInstanceOf[html.LI]
@@ -148,7 +155,18 @@ object App:
       (e: KeyboardEvent) =>
         if e.keyCode == KeyCode.Enter && filtered.nonEmpty then
           e.preventDefault()
-          selectValue(filtered.head)
+          if indexHighlighted.isDefined then selectValue(filtered(indexHighlighted.get))
+          else selectValue(filtered.head)
+        if e.keyCode == KeyCode.Tab && filtered.nonEmpty then
+          e.preventDefault()
+          val items = suggestions.getElementsByTagName("li")
+          if indexHighlighted.isDefined then
+            items(indexHighlighted.get).classList.remove("highlighted")
+            if e.shiftKey then
+              indexHighlighted = Some((indexHighlighted.get - 1 + filtered.size) % filtered.size)
+            else indexHighlighted = Some((indexHighlighted.get + 1) % filtered.size)
+          else indexHighlighted = Some(0)
+          items(indexHighlighted.get).classList.add("highlighted")
     )
 
     input.addEventListener(

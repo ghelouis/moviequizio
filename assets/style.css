@@ -137,6 +137,10 @@ h1 {
   li:hover {
     background-color: #f3f5f6;
   }
+
+  li.highlighted {
+    background-color: #f3f5f6;
+  }
 }
 
 .pushable {
