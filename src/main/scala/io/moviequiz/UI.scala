@@ -1,17 +1,15 @@
 package io.moviequiz
 
+import org.scalajs.dom.html.Button
 import org.scalajs.dom.{Event, KeyCode, KeyboardEvent, MouseEvent, document, html, window}
 
 class UI:
 
   var onStart: () => Unit = () => ()
 
-  def renderWelcomeScreen(): Unit =
-    val title = document.createElement("h1").asInstanceOf[html.Heading]
-    title.textContent = "MovieQuiz.io"
-    title.classList.add("title")
-    document.body.appendChild(title)
+  var onGuessed: String => Unit = (_: String) => ()
 
+  private def createButton(textContent: String): Button =
     val button = document.createElement("button").asInstanceOf[html.Button]
     button.classList.add("pushable")
     val shadow = document.createElement("span")
@@ -20,17 +18,26 @@ class UI:
     edge.classList.add("edge")
     val front = document.createElement("span")
     front.classList.add("front")
-    front.textContent = "▶"
+    front.textContent = textContent
     button.appendChild(shadow)
     button.appendChild(edge)
     button.appendChild(front)
-    document.body.appendChild(button)
+    button
 
-    button.addEventListener(
+  def renderWelcomeScreen(): Unit =
+    val title = document.createElement("h1").asInstanceOf[html.Heading]
+    title.textContent = "MovieQuiz.io"
+    title.classList.add("title")
+    document.body.appendChild(title)
+
+    val startButton = createButton("▶")
+    document.body.appendChild(startButton)
+
+    startButton.addEventListener(
       "click",
       (e: MouseEvent) =>
         title.remove()
-        button.remove()
+        startButton.remove()
         onStart()
     )
 
@@ -41,8 +48,9 @@ class UI:
     document.body.appendChild(title)
 
     val score = document.createElement("h1").asInstanceOf[html.Heading]
-    score.textContent = "Score: 0"
+    score.id = "score"
     score.classList.add("score")
+    score.textContent = "Score: 0"
     document.body.appendChild(score)
 
   def renderScreenshot(movieSlug: String, screenshotNumber: Int): Unit =
@@ -58,14 +66,14 @@ class UI:
     val input = document.createElement("input").asInstanceOf[html.Input]
     input.placeholder = "Guess the movie..."
 
-    val clearBtn = document.createElement("span").asInstanceOf[html.Span]
-    clearBtn.title = "Clear"
-    clearBtn.classList.add("clear-btn")
-    clearBtn.innerHTML = "&times;"
+    val clearButton = document.createElement("span").asInstanceOf[html.Span]
+    clearButton.title = "Clear"
+    clearButton.classList.add("clear-btn")
+    clearButton.innerHTML = "&times;"
 
     val suggestions = document.createElement("ul").asInstanceOf[html.UList]
     container.appendChild(input)
-    container.appendChild(clearBtn)
+    container.appendChild(clearButton)
     container.appendChild(suggestions)
     document.body.appendChild(container)
 
@@ -94,12 +102,13 @@ class UI:
       input.value = value
       filtered = List.empty[String]
       renderList()
+      onGuessed(input.value)
 
     input.addEventListener(
       "input",
       (_: Event) =>
-        if input.value.nonEmpty then clearBtn.style.display = "block"
-        else clearBtn.style.display = "none"
+        if input.value.nonEmpty then clearButton.style.display = "block"
+        else clearButton.style.display = "none"
         if input.value.length > 2 then
           filtered = movieNames.filter(_.toLowerCase.contains(input.value.toLowerCase)).take(7)
         else filtered = List.empty[String]
@@ -137,12 +146,53 @@ class UI:
         )
     )
 
-    clearBtn.addEventListener(
+    clearButton.addEventListener(
       "click",
-      (_: Event) =>
-        input.value = ""
-        clearBtn.style.display = "none"
-        input.focus()
+      (_: Event) => clearInput(input, clearButton)
     )
 
     input.focus()
+
+  private def clearInput(input: html.Input, clearButton: html.Span): Unit =
+    input.value = ""
+    clearButton.style.display = "none"
+    input.focus()
+
+  def refreshScore(newScore: Int): Unit =
+    val score = document.getElementById("score")
+    score.textContent = s"Score: $newScore"
+
+  def clearGuessBox(): Unit =
+    val input = document.getElementsByTagName("input").head.asInstanceOf[html.Input]
+    val clearButton = document.getElementsByTagName("span").head.asInstanceOf[html.Span]
+    clearInput(input, clearButton)
+
+  private def renderEndScreen(titleText: String, finalScore: Int): Unit =
+    document.body.innerHTML = ""
+
+    val container = document.createElement("div")
+    container.classList.add("end-container")
+
+    val title = document.createElement("h1").asInstanceOf[html.Heading]
+    title.textContent = titleText
+    title.classList.add("title")
+    container.append(title)
+
+    val score = document.createElement("h1")
+    score.textContent = s"Score: $finalScore"
+    container.append(score)
+
+    val shareButton = createButton("Share")
+    container.append(shareButton)
+
+    val text = document.createElement("h2").asInstanceOf[html.Heading]
+    text.textContent = "Come back tomorrow for another challenge!"
+    container.append(text)
+
+    document.body.appendChild(container)
+
+  def renderVictoryScreen(finalScore: Int): Unit =
+    renderEndScreen("YOU WIN", finalScore)
+
+  def renderFailScreen(finalScore: Int): Unit =
+    renderEndScreen("GAME OVER", finalScore)
