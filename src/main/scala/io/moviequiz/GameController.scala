@@ -3,9 +3,13 @@ package io.moviequiz
 import scala.scalajs.js.Date
 import scala.util.Random
 
+case class Movie(slug: String, name: String)
+
 class GameController(ui: UI):
 
-  private val screenshotsPerMovie = 3
+  private val maxNumberOfMoviesPerGame = 10
+
+  private val numberOfScreenshotsPerMovie = 3
 
   private val moviesOrdered = List(
     Movie("bound-(1996)", "Bound (1996)"),
@@ -14,7 +18,12 @@ class GameController(ui: UI):
     Movie("the-guest-(2014)", "The Guest (2014)")
   )
 
-  private val rand = Random(getSeed)
+  private val numberOfDaysSinceInception: Int =
+    val rootDate = new Date(2025, 9, 22)
+    val currentDate = new Date()
+    ((currentDate.getTime() - rootDate.getTime()) / (1000 * 60 * 60 * 24)).toInt
+
+  private val rand = Random(numberOfDaysSinceInception)
 
   private val movies = rand.shuffle(moviesOrdered)
 
@@ -24,7 +33,7 @@ class GameController(ui: UI):
 
   def init(): Unit =
     ui.onStart = () => startGame()
-    ui.onGuessed = movieName => guess(movieName)
+    ui.onGuess = movieName => guess(movieName)
     ui.renderWelcomeScreen()
 
   private def startGame(): Unit =
@@ -34,7 +43,7 @@ class GameController(ui: UI):
 
   private def displayMovie(): Unit =
     val movie = movies(currentMovieIndex)
-    val screenshotNumber = rand.nextInt(screenshotsPerMovie) + 1
+    val screenshotNumber = rand.nextInt(numberOfScreenshotsPerMovie) + 1
     ui.renderScreenshot(movie.slug, screenshotNumber)
 
   private def guess(movieName: String): Unit =
@@ -43,7 +52,7 @@ class GameController(ui: UI):
 
   private def winRound(): Unit =
     score += 1
-    if score == 10 then ui.renderVictoryScreen(score)
+    if score == maxNumberOfMoviesPerGame then ui.renderVictoryScreen(score, numberOfDaysSinceInception)
     else
       ui.refreshScore(score)
       ui.clearGuessBox()
@@ -51,12 +60,7 @@ class GameController(ui: UI):
       displayMovie()
 
   private def lose(): Unit =
-    ui.renderFailScreen(score)
-
-  private def getSeed: Int =
-    val rootDate = new Date(2025, 9, 22)
-    val currentDate = new Date()
-    ((currentDate.getTime() - rootDate.getTime()) / (1000 * 60 * 60 * 24)).toInt
+    ui.renderFailScreen(score, numberOfDaysSinceInception)
 
 object GameController:
   def apply(ui: UI): GameController = new GameController(ui)

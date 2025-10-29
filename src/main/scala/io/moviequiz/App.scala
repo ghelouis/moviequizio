@@ -3,8 +3,6 @@ package io.moviequiz
 import org.scalajs.dom
 import org.scalajs.dom.document
 
-case class Movie(slug: String, name: String)
-
 object App:
 
   def main(args: Array[String]): Unit =

@@ -1,13 +1,16 @@
 package io.moviequiz
 
 import org.scalajs.dom.html.Button
+import org.scalajs.dom.window.navigator
 import org.scalajs.dom.{Event, KeyCode, KeyboardEvent, MouseEvent, document, html, window}
+
+import scala.scalajs.js.timers.setTimeout
 
 class UI:
 
   var onStart: () => Unit = () => ()
 
-  var onGuessed: String => Unit = (_: String) => ()
+  var onGuess: String => Unit = (_: String) => ()
 
   private def createButton(textContent: String): Button =
     val button = document.createElement("button").asInstanceOf[html.Button]
@@ -102,7 +105,7 @@ class UI:
       input.value = value
       filtered = List.empty[String]
       renderList()
-      onGuessed(input.value)
+      onGuess(input.value)
 
     input.addEventListener(
       "input",
@@ -167,7 +170,7 @@ class UI:
     val clearButton = document.getElementsByTagName("span").head.asInstanceOf[html.Span]
     clearInput(input, clearButton)
 
-  private def renderEndScreen(titleText: String, finalScore: Int): Unit =
+  private def renderEndScreen(titleText: String, finalScore: Int, numberOfDaysSinceInception: Int): Unit =
     document.body.innerHTML = ""
 
     val container = document.createElement("div")
@@ -184,6 +187,16 @@ class UI:
 
     val shareButton = createButton("Share")
     container.append(shareButton)
+    val shareText = s"MovieQuiz.io #$numberOfDaysSinceInception score: $finalScore"
+    shareButton.addEventListener(
+      "click",
+      (_: Event) =>
+        navigator.clipboard.writeText(shareText)
+        shareButton.querySelector(".front").textContent = "Copied!"
+        setTimeout(5000) {
+          shareButton.querySelector(".front").textContent = "Share"
+        }
+    )
 
     val text = document.createElement("h2").asInstanceOf[html.Heading]
     text.textContent = "Come back tomorrow for another challenge!"
@@ -191,8 +204,8 @@ class UI:
 
     document.body.appendChild(container)
 
-  def renderVictoryScreen(finalScore: Int): Unit =
-    renderEndScreen("YOU WIN", finalScore)
+  def renderVictoryScreen(finalScore: Int, numberOfDaysSinceInception: Int): Unit =
+    renderEndScreen("YOU WIN", finalScore, numberOfDaysSinceInception)
 
-  def renderFailScreen(finalScore: Int): Unit =
-    renderEndScreen("GAME OVER", finalScore)
+  def renderFailScreen(finalScore: Int, numberOfDaysSinceInception: Int): Unit =
+    renderEndScreen("GAME OVER", finalScore, numberOfDaysSinceInception)
