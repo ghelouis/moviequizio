@@ -12,9 +12,10 @@ class UI:
 
   var onGuess: String => Unit = (_: String) => ()
 
-  private def createButton(textContent: String): Button =
+  private def createButton(textContent: String, title: String): Button =
     val button = document.createElement("button").asInstanceOf[html.Button]
     button.classList.add("pushable")
+    button.title = title
     val shadow = document.createElement("span")
     shadow.classList.add("shadow")
     val edge = document.createElement("span")
@@ -33,7 +34,7 @@ class UI:
     title.classList.add("title")
     document.body.appendChild(title)
 
-    val startButton = createButton("▶")
+    val startButton = createButton("▶", "Play")
     document.body.appendChild(startButton)
 
     startButton.addEventListener(
@@ -185,7 +186,7 @@ class UI:
     score.textContent = s"Score: $finalScore"
     container.append(score)
 
-    val shareButton = createButton("Share")
+    val shareButton = createButton("Share", "Share")
     container.append(shareButton)
     val shareText = s"MovieQuiz.io #$numberOfDaysSinceInception score: $finalScore"
     shareButton.addEventListener(

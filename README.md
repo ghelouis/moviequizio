@@ -1,4 +1,5 @@
-# Movie Quiz
+# MovieQuiz.io
+How well can you guess a movie from a single screenshot?
 
 Built with [Scala.js](https://www.scala-js.org/) 
 
@@ -7,5 +8,9 @@ Built with [Scala.js](https://www.scala-js.org/)
 ```
 > fastLinkJS
 ```
+- Automatically recompile:
+```
+> ~fastLinkJS
+```
 
-- Open the game: open index.html in your favourite browser
+- Play the game: open [index.html](./index.html) in your favourite browser

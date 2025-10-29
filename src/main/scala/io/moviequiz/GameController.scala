@@ -7,9 +7,9 @@ case class Movie(slug: String, name: String)
 
 class GameController(ui: UI):
 
-  private val maxNumberOfMoviesPerGame = 10
+  private val maxNbOfMoviesPerGame = 3
 
-  private val numberOfScreenshotsPerMovie = 3
+  private val nbOfScreenshotsPerMovie = 3
 
   private val moviesOrdered = List(
     Movie("bound-(1996)", "Bound (1996)"),
@@ -18,49 +18,74 @@ class GameController(ui: UI):
     Movie("the-guest-(2014)", "The Guest (2014)")
   )
 
-  private val numberOfDaysSinceInception: Int =
+  private val gameDayId: Int =
     val rootDate = new Date(2025, 9, 22)
     val currentDate = new Date()
     ((currentDate.getTime() - rootDate.getTime()) / (1000 * 60 * 60 * 24)).toInt
 
-  private val rand = Random(numberOfDaysSinceInception)
+  private val rand = Random(gameDayId)
 
   private val movies = rand.shuffle(moviesOrdered)
-
-  private var currentMovieIndex = 0
 
   private var score = 0
 
   def init(): Unit =
     ui.onStart = () => startGame()
     ui.onGuess = movieName => guess(movieName)
-    ui.renderWelcomeScreen()
+    Storage.loadGame(gameDayId) match
+      case Some(game) if game.gameDayId == gameDayId =>
+        loadGame(game)
+      case Some(game) =>
+        Storage.clear()
+        ui.renderWelcomeScreen()
+      case None =>
+        ui.renderWelcomeScreen()
+
+  private def loadGame(game: Game): Unit =
+    for i <- 0 until game.score do rand.nextInt()
+    score = game.score
+    if game.isFinished && isVictory then
+      displayMovie(score - 1)
+      ui.renderVictoryScreen(score, gameDayId)
+    else if game.isFinished then
+      displayMovie(score)
+      ui.renderFailScreen(score, gameDayId)
+    else
+      displayMovie(score)
+      ui.renderTitleAndScore()
+      ui.refreshScore(score)
+      ui.renderGuessBox(movies.map(_.name))
 
   private def startGame(): Unit =
     ui.renderTitleAndScore()
-    displayMovie()
+    displayMovie(0)
     ui.renderGuessBox(movies.map(_.name))
 
-  private def displayMovie(): Unit =
-    val movie = movies(currentMovieIndex)
-    val screenshotNumber = rand.nextInt(numberOfScreenshotsPerMovie) + 1
+  private def displayMovie(movieIndex: Int): Unit =
+    val movie = movies(movieIndex)
+    val screenshotNumber = rand.nextInt(nbOfScreenshotsPerMovie) + 1
     ui.renderScreenshot(movie.slug, screenshotNumber)
 
   private def guess(movieName: String): Unit =
-    if movieName == movies(currentMovieIndex).name then winRound()
+    if movieName == movies(score).name then winRound()
     else lose()
+
+  private def isVictory = score == maxNbOfMoviesPerGame
 
   private def winRound(): Unit =
     score += 1
-    if score == maxNumberOfMoviesPerGame then ui.renderVictoryScreen(score, numberOfDaysSinceInception)
+    if isVictory then
+      ui.renderVictoryScreen(score, gameDayId)
+      Storage.saveGame(Game(gameDayId, score, true))
     else
       ui.refreshScore(score)
       ui.clearGuessBox()
-      currentMovieIndex += 1
-      displayMovie()
+      displayMovie(score)
+      Storage.saveGame(Game(gameDayId, score, false))
 
   private def lose(): Unit =
-    ui.renderFailScreen(score, numberOfDaysSinceInception)
+    ui.renderFailScreen(score, gameDayId)
+    Storage.saveGame(Game(gameDayId, score, true))
 
 object GameController:
   def apply(ui: UI): GameController = new GameController(ui)
