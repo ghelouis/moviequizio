@@ -42,12 +42,14 @@ class GameController(ui: UI):
         ui.renderWelcomeScreen()
 
   private def loadGame(game: Game): Unit =
-    for i <- 0 until game.score do rand.nextInt()
+    movies.foreach(m => println(m.name))
+    for i <- 0 until game.score - 1 do rand.nextInt()
     score = game.score
     if game.isFinished && isVictory then
       displayMovie(score - 1)
       ui.renderVictoryScreen(score, gameDayId)
     else if game.isFinished then
+      if score > 0 then rand.nextInt()
       displayMovie(score)
       ui.renderFailScreen(score, gameDayId)
     else
