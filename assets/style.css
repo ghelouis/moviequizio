@@ -45,7 +45,6 @@ h1 {
   right: 10px;
 }
 
-
 .suggestion-container {
   position: relative;
   display: inline-block;
@@ -66,7 +65,7 @@ h1 {
     transition:
       box-shadow 0.2s ease-in-out,
       border-color 0.2s,
-      border-radius: 0.15s;
+      border-radius 0.15s;
   }
 
   input:focus {
@@ -145,7 +144,7 @@ h1 {
 }
 
 .pushable {
-  background: hsl(85deg, 100%, 28%) ;
+  background: hsl(85deg, 100%, 28%);
   border-radius: 12px;
   border: none;
   padding: 0;
@@ -181,11 +180,11 @@ h1 {
 
 .edge {
   background: linear-gradient(
-  to left,
-  hsl(85deg 100% 16%) 0%,
-  hsl(85deg 100% 32%) 8%,
-  hsl(85deg 100% 32%) 92%,
-  hsl(85deg 100% 16%) 100%
+    to left,
+    hsl(85deg 100% 16%) 0%,
+    hsl(85deg 100% 32%) 8%,
+    hsl(85deg 100% 32%) 92%,
+    hsl(85deg 100% 16%) 100%
   );
 }
 

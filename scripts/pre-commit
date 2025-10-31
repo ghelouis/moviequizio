@@ -1,0 +1,52 @@
+#!/bin/sh
+
+echo_blue() {
+  echo -e "\e[0;36m$1\e[0m"
+}
+
+echo_yellow() {
+  echo -e "\e[0;33m$1\e[0m"
+}
+
+check_tools() {
+  while [ "$1" != "" ]; do
+    if [ ! `command -v $1` ]; then
+      echo "Please install missing tools to execute the pre-commit script. Command not found: $1"
+      exit 1
+    fi
+    shift
+  done
+}
+
+check_tools ./node_modules/.bin/prettier scalafmt
+
+echo_blue "[HTML/CSS] Checking formatting..."
+
+files=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g' | grep -E "\.(html|css)$")
+changed_files=0
+
+for file in $files; do
+  ./node_modules/.bin/prettier --write "$file"
+
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+
+  if ! git diff --quiet -- "$file"; then
+    changed_files=1
+  fi
+done
+
+if [ "$changed_files" -eq 1 ]; then
+  echo_yellow "[HTML/CSS] Some files were reformatted, please review and commit again."
+  exit 1
+fi
+
+echo_blue "[SCALA] Checking formatting..."
+
+scalafmt --reportError
+
+if [ $? -ne 0 ]; then
+  echo_yellow "[SCALA] Some files are invalid or were reformatted, please review and commit again."
+  exit 1
+fi
