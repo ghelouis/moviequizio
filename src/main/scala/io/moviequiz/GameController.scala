@@ -20,12 +20,12 @@ class GameController(ui: UI):
     Movie("the-guest-(2014)", "The Guest (2014)")
   )
 
-  private val gameDayId: Int =
+  private val gameDayIndex: Int =
     val rootDate = new Date(2025, 9, 22)
     val currentDate = new Date()
     ((currentDate.getTime() - rootDate.getTime()) / (1000 * 60 * 60 * 24)).toInt
 
-  private val rand = Random(gameDayId)
+  private val rand = Random(gameDayIndex)
 
   private val movies = rand.shuffle(moviesOrdered)
 
@@ -34,8 +34,8 @@ class GameController(ui: UI):
   def init(): Unit =
     ui.onStart = () => startGame()
     ui.onGuess = movieName => guess(movieName)
-    Storage.loadGame(gameDayId) match
-      case Some(game) if game.gameDayId == gameDayId =>
+    Storage.loadGame(gameDayIndex) match
+      case Some(game) if game.gameDayIndex == gameDayIndex =>
         loadGame(game)
       case Some(game) =>
         Storage.clear()
@@ -49,11 +49,11 @@ class GameController(ui: UI):
     score = game.score
     if game.isFinished && isVictory then
       displayMovie(score - 1)
-      ui.renderVictoryScreen(score, gameDayId)
+      ui.renderVictoryScreen(score, gameDayIndex)
     else if game.isFinished then
       if score > 0 then rand.nextInt()
       displayMovie(score)
-      ui.renderFailScreen(score, gameDayId)
+      ui.renderFailScreen(score, gameDayIndex)
     else
       displayMovie(score)
       ui.renderTitleAndScore()
@@ -80,17 +80,17 @@ class GameController(ui: UI):
   private def winRound(): Unit =
     score += 1
     if isVictory then
-      ui.renderVictoryScreen(score, gameDayId)
-      Storage.saveGame(Game(gameDayId, score, true))
+      ui.renderVictoryScreen(score, gameDayIndex)
+      Storage.saveGame(Game(gameDayIndex, score, true))
     else
       ui.refreshScore(score)
       ui.clearGuessBox()
       displayMovie(score)
-      Storage.saveGame(Game(gameDayId, score, false))
+      Storage.saveGame(Game(gameDayIndex, score, false))
 
   private def lose(): Unit =
-    ui.renderFailScreen(score, gameDayId)
-    Storage.saveGame(Game(gameDayId, score, true))
+    ui.renderFailScreen(score, gameDayIndex)
+    Storage.saveGame(Game(gameDayIndex, score, true))
 
 object GameController:
   def apply(ui: UI): GameController = new GameController(ui)

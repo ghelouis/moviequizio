@@ -2,22 +2,22 @@ package io.moviequiz
 
 import org.scalajs.dom.window.localStorage
 
-case class Game(gameDayId: Int, score: Int, isFinished: Boolean)
+case class Game(gameDayIndex: Int, score: Int, isFinished: Boolean)
 
 object Storage:
 
   private enum Key:
     case GameDayId, Score, IsFinished
 
-  def loadGame(gameDayId: Int): Option[Game] =
-    val gameDayId = getIntItem(Key.GameDayId)
+  def loadGame(gameDayIndex: Int): Option[Game] =
+    val gameDayIndex = getIntItem(Key.GameDayId)
     val score = getIntItem(Key.Score)
     val isFinished = getBoolItem(Key.IsFinished)
-    if gameDayId.isEmpty || score.isEmpty || isFinished.isEmpty then None
-    else Some(Game(gameDayId.get, score.get, isFinished.get))
+    if gameDayIndex.isEmpty || score.isEmpty || isFinished.isEmpty then None
+    else Some(Game(gameDayIndex.get, score.get, isFinished.get))
 
   def saveGame(game: Game): Unit =
-    setItem(Key.GameDayId, game.gameDayId.toString)
+    setItem(Key.GameDayId, game.gameDayIndex.toString)
     setItem(Key.Score, game.score.toString)
     setItem(Key.IsFinished, game.isFinished.toString)
 
