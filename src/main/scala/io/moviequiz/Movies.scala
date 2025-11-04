@@ -15,13 +15,7 @@ object Movies:
     val slugs = array.map(json => json.slug.asInstanceOf[String]).toSeq
 
     val slugsToTitles = array
-      .map(movie =>
-        movie.slug.asInstanceOf[String] -> Set(
-          movie.title_og.asInstanceOf[String],
-          movie.title_en.asInstanceOf[String],
-          movie.title_fr.asInstanceOf[String]
-        )
-      )
+      .map(movie => movie.slug.asInstanceOf[String] -> movie.titles.asInstanceOf[js.Array[String]].toSet)
       .toMap
 
     Movies(slugs, slugsToTitles)
