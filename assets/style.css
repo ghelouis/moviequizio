@@ -1,23 +1,50 @@
 @font-face {
-  font-family: 'Luckiest Guy';
-  src: url('LuckiestGuy-Regular.ttf') format('truetype');
+  font-family: 'luckiest_guyregular';
+  src:
+    url('luckiestguy-regular-webfont.woff2') format('woff2'),
+    url('luckiestguy-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f0f0f0;
   flex-direction: column;
-  gap: 20px;
+  gap: 5vh;
   font-family: sans-serif;
+  background-position: center;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+
+.bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(15px) brightness(0.6);
+}
+
+img {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
 }
 
 h1 {
-  font-family: 'Luckiest Guy', sans-serif;
-  font-weight: 400;
+  font-family: 'luckiest_guyregular', sans-serif;
   font-style: normal;
   padding: 0;
   margin: 0;
@@ -31,116 +58,116 @@ h1 {
   font-size: 5rem;
 }
 
-.header {
+#header {
   color: #f0f0f0;
   position: fixed;
   top: 10px;
   left: 10px;
 }
 
-.score {
+#score {
   color: #f0f0f0;
   position: fixed;
   top: 10px;
   right: 10px;
 }
 
-.suggestion-container {
+#suggestion-container {
   position: relative;
   display: inline-block;
+}
 
-  input {
-    width: 20vw;
-    padding: 12px 20px;
-    border: 1px solid #dfe1e5;
-    border-radius: 12px;
-    outline: none;
+#suggestion-container input {
+  width: 20vw;
+  padding: 12px 20px;
+  border: 1px solid #dfe1e5;
+  border-radius: 12px;
+  outline: none;
 
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
 
-    font-size: 16px;
-    font-family: sans-serif;
-    color: #202124;
+  font-size: 16px;
+  font-family: sans-serif;
+  color: #202124;
 
-    transition:
-      box-shadow 0.2s ease-in-out,
-      border-color 0.2s,
-      border-radius 0.15s;
-  }
+  transition:
+    box-shadow 0.2s ease-in-out,
+    border-color 0.2s,
+    border-radius 0.15s;
+}
 
-  input:focus {
-    border-color: #b0b3b8;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  }
+#suggestion-container input:focus {
+  border-color: #b0b3b8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
 
-  input:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-  }
+#suggestion-container input:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
 
-  input.has-suggestions {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
+#suggestion-container input.has-suggestions {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
 
-  .clear-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 22px;
-    color: #474747;
-    display: none;
-    user-select: none;
-  }
+#suggestion-container .clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 22px;
+  color: #474747;
+  display: none;
+  user-select: none;
+}
 
-  input:not(:placeholder-shown) + .clear-btn {
-    display: block;
-  }
+#suggestion-container input:not(:placeholder-shown) + .clear-btn {
+  display: block;
+}
 
-  .clear-btn:hover {
-    color: #555;
-  }
+#suggestion-container .clear-btn:hover {
+  color: #555;
+}
 
-  ul {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+#suggestion-container ul {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 
-    border: 1px solid #b0b3b8;
-    border-top: none;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #b0b3b8;
+  border-top: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
-    right: 0;
-    background-color: white;
-    overflow-y: auto;
-  }
+  right: 0;
+  background-color: white;
+  overflow-y: auto;
+}
 
-  ul:empty {
-    display: none;
-  }
+#suggestion-container ul:empty {
+  display: none;
+}
 
-  li {
-    padding: 8px 20px;
-    font-size: 16px;
-    font-family: sans-serif;
-    color: #202124;
-    cursor: pointer;
-    transition: background-color 0.15s;
-  }
+#suggestion-container li {
+  padding: 8px 20px;
+  font-size: 16px;
+  font-family: sans-serif;
+  color: #202124;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
 
-  li:hover {
-    background-color: #f3f5f6;
-  }
+#suggestion-container li:hover {
+  background-color: #f3f5f6;
+}
 
-  li.highlighted {
-    background-color: #f3f5f6;
-  }
+#suggestion-container li.highlighted {
+  background-color: #f3f5f6;
 }
 
 .pushable {
@@ -150,6 +177,9 @@ h1 {
   padding: 0;
   cursor: pointer;
   outline-offset: 4px;
+  transition: filter 600ms;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .pushable:active .front {
@@ -160,18 +190,9 @@ h1 {
   outline: none;
 }
 
-.pushable {
-  transition: filter 600ms;
-  user-select: none;
-}
-
 .pushable:hover {
   transition: filter 250ms;
   filter: brightness(105%);
-}
-
-.pushable {
-  -webkit-tap-highlight-color: transparent;
 }
 
 .shadow {
@@ -192,7 +213,7 @@ h1 {
   display: block;
   padding: 12px 42px;
   border-radius: 12px;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   background: hsl(90deg 100% 38%);
   color: white;
   transform: translateY(-6px);
@@ -202,10 +223,46 @@ h1 {
   background-color: #f0f0f0;
   width: 100%;
   height: 40vh;
+  gap: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f0f0f0;
   flex-direction: column;
-  gap: 20px;
+}
+
+.end-container h1,
+.end-container h2 {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  body {
+    gap: 10vh;
+  }
+
+  .title {
+    font-size: 12vw;
+  }
+
+  #suggestion-container input {
+    width: 90vw;
+    border-radius: 0;
+  }
+
+  #suggestion-container ul {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .front {
+    font-size: 2rem;
+  }
+}
+@media (max-width: 768px) and (orientation: landscape) {
+  .end-container {
+    height: 80vh;
+  }
 }

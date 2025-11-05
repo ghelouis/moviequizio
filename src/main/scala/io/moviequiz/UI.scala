@@ -1,6 +1,6 @@
 package io.moviequiz
 
-import org.scalajs.dom.html.Button
+import org.scalajs.dom.html.{Button, Div, Image}
 import org.scalajs.dom.window.navigator
 import org.scalajs.dom.{Event, KeyCode, KeyboardEvent, MouseEvent, document, html, window}
 
@@ -46,26 +46,43 @@ class UI:
     )
 
   def renderTitleAndScore(score: Int): Unit =
-    val title = document.createElement("h1").asInstanceOf[html.Heading]
-    title.textContent = "MovieQuiz.io"
-    title.classList.add("header")
-    document.body.appendChild(title)
+    val header = document.createElement("h1").asInstanceOf[html.Heading]
+    header.textContent = "MovieQuiz.io"
+    header.id = "header"
+    document.body.appendChild(header)
 
     val scoreHeading = document.createElement("h1").asInstanceOf[html.Heading]
     scoreHeading.id = "score"
-    scoreHeading.classList.add("score")
     scoreHeading.textContent = s"Score: $score"
     document.body.appendChild(scoreHeading)
 
   def renderScreenshot(url: String): Unit =
-    document.body.style.backgroundImage = s"url('$url')"
-    document.body.style.backgroundPosition = "center"
-    document.body.style.backgroundSize = "cover"
-    document.body.style.backgroundRepeat = "no-repeat"
+    if isMobile then
+      Option(document.querySelector(".bg").asInstanceOf[Div]) match
+        case Some(bg) =>
+          bg.style.backgroundImage = s"url('$url')"
+        case None =>
+          val bg = document.createElement("div").asInstanceOf[html.Div]
+          bg.classList.add("bg")
+          bg.style.backgroundImage = s"url('$url')"
+          document.body.appendChild(bg)
+
+      Option(document.querySelector("img").asInstanceOf[Image]) match
+        case Some(img) =>
+          img.src = url
+        case None =>
+          val img = document.createElement("img").asInstanceOf[html.Image]
+          img.src = url
+          document.body.appendChild(img)
+    else
+      document.body.style.backgroundPosition = "center"
+      document.body.style.backgroundSize = "cover"
+      document.body.style.backgroundRepeat = "no-repeat"
+      document.body.style.backgroundImage = s"url('$url')"
 
   def renderGuessBox(movieNames: Seq[String]): Unit =
     val container = document.createElement("div")
-    container.classList.add("suggestion-container")
+    container.id = "suggestion-container"
 
     val input = document.createElement("input").asInstanceOf[html.Input]
     input.placeholder = "Guess the movie..."
@@ -155,12 +172,12 @@ class UI:
       (_: Event) => clearInput(input, clearButton)
     )
 
-    input.focus()
+    if !isMobile then input.focus()
 
   private def clearInput(input: html.Input, clearButton: html.Span): Unit =
     input.value = ""
     clearButton.style.display = "none"
-    input.focus()
+    if !isMobile then input.focus()
 
   def refreshScore(newScore: Int): Unit =
     val score = document.getElementById("score")
@@ -170,9 +187,13 @@ class UI:
     val input = document.getElementsByTagName("input").head.asInstanceOf[html.Input]
     val clearButton = document.getElementsByTagName("span").head.asInstanceOf[html.Span]
     clearInput(input, clearButton)
+    if !isMobile then input.focus()
 
   private def renderEndScreen(titleText: String, finalScore: Int, gameDayIndex: Int): Unit =
-    document.body.innerHTML = ""
+    Option(document.getElementById("header")).foreach(_.remove())
+    Option(document.getElementById("score")).foreach(_.remove())
+    document.getElementsByTagName("img").foreach(_.remove())
+    Option(document.getElementById("suggestion-container")).foreach(_.remove())
 
     val container = document.createElement("div")
     container.classList.add("end-container")
@@ -210,3 +231,6 @@ class UI:
 
   def renderFailScreen(finalScore: Int, gameDayIndex: Int): Unit =
     renderEndScreen("GAME OVER", finalScore, gameDayIndex)
+
+  private def isMobile =
+    window.innerWidth < 768
