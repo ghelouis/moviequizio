@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v5
+    - name: Setup JDK
+      uses: actions/setup-java@v5
+      with:
+        java-version: '25'
+        distribution: 'temurin'
+        cache: 'sbt'
+    - uses: sbt/setup-sbt@v1
+      with:
+        sbt-runner-version: 1.11.7
+    - name: Run tests
+      run: sbt test
