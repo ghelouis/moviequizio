@@ -28,6 +28,7 @@ sbt test
 - [Scalafmt](https://scalameta.org/scalafmt/) for Scala.
 
 Check automatically on commit:
+
 - Install [pre-commit](https://pre-commit.com/#installation) and copy [scripts/pre-commit](./scripts/pre-commit) to `.git/hooks/pre-commit`.
 
 ## Production
