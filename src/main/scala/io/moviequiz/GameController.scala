@@ -6,10 +6,7 @@ class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, st
 
   private val rand = Random(gameDayIndex)
 
-  private val movieSlugsShuffled = rand
-    .shuffle(movies.slugs)
-    .take(conf.maxNbOfMoviesPerGame)
-    .sortWith((a, b) => movies.slugsToPopularity(a) > movies.slugsToPopularity(b))
+  private val movieSlugsShuffled = rand.shuffle(movies.slugs)
 
   private val movieTitles = movies.slugsToTitles.values.flatten.toSeq
 

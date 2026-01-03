@@ -14,14 +14,12 @@ class MoviesSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
           "movies": [
             {
               "slug": "aladdin-(1992)",
-              "popularity": 87,
               "titles": [
                 "Aladdin (1992)"
               ]
             },
             {
               "slug": "the-fifth-element-(1997)",
-              "popularity": 88,
               "titles": [
                 "The Fifth Element (1997)",
                 "Le Cinquième Élément (1997)"
@@ -29,7 +27,6 @@ class MoviesSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
             },
             {
               "slug": "the-gods-must-be-crazy-(1980)",
-              "popularity": 73,
               "titles": [
                 "The Gods Must Be Crazy (1980)",
                 "Les dieux sont tombés sur la tête (1980)"
@@ -37,7 +34,6 @@ class MoviesSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
             },
             {
               "slug": "the-good-the-bad-and-the-ugly-(1966)",
-              "popularity": 91,
               "titles": [
                 "The Good, the Bad and the Ugly (1966)",
                 "Le Bon, la Brute et le Truand (1966)",
@@ -78,14 +74,5 @@ class MoviesSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
         )
       )
       assert(movies.slugsToTitles == expectedSlugsToTitles)
-
-      And("the slugsToPopularity map should be as expected")
-      val expectedSlugsToPopularity = Map(
-        "aladdin-(1992)" -> 87,
-        "the-fifth-element-(1997)" -> 88,
-        "the-gods-must-be-crazy-(1980)" -> 73,
-        "the-good-the-bad-and-the-ugly-(1966)" -> 91
-      )
-      assert(movies.slugsToPopularity == expectedSlugsToPopularity)
     }
   }
