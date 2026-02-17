@@ -31,6 +31,7 @@ jobs:
       - name: Run tests
         run: sbt test
       - name: Build public directory
+        if: github.ref == 'refs/heads/master'
         run: sbt buildPublic
       - name: Deploy
         if: github.ref == 'refs/heads/master'
