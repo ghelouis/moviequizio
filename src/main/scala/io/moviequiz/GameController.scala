@@ -1,12 +1,9 @@
 package io.moviequiz
 
-import scala.util.Random
-
 class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, storage: Storage):
 
-  private val rand = Random(gameDayIndex)
-
-  private val movieSlugsShuffled = rand.shuffle(movies.slugs)
+  private val moviesToGuess =
+    Randomizer.getMoviesToGuess(gameDayIndex, movies.slugs, conf.moviesPerGame, conf.screenshotsPerMovie)
 
   private val movieTitles = movies.slugsToTitles.values.flatten.toSeq
 
@@ -25,17 +22,14 @@ class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, st
         ui.renderWelcomeScreen()
 
   private def loadGame(game: Game): Unit =
-    for i <- 0 until game.score - 1 do rand.nextInt()
     score = game.score
     if game.isFinished && isVictory then
       displayMovie(score - 1)
       ui.renderVictoryScreen(score, gameDayIndex)
     else if game.isFinished then
-      if score > 0 then rand.nextInt()
       displayMovie(score)
       ui.renderFailScreen(score, gameDayIndex)
     else
-      rand.nextInt()
       displayMovie(score)
       ui.renderTitleAndScore(score)
       ui.renderGuessBox(movieTitles)
@@ -45,16 +39,16 @@ class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, st
     displayMovie(score)
     ui.renderGuessBox(movieTitles)
 
-  private def displayMovie(movieIndex: Int): Unit =
-    val screenshotNumber = rand.nextInt(conf.nbOfScreenshotsPerMovie) + 1
-    val url = s"${conf.cdn}/images/${movieSlugsShuffled(movieIndex)}/$screenshotNumber.avif"
+  private def displayMovie(movieToGuessIndex: Int): Unit =
+    val movieToGuess = moviesToGuess(movieToGuessIndex)
+    val url = s"${conf.cdn}/images/${movieToGuess.slug}/${movieToGuess.screenshot}.avif"
     ui.renderScreenshot(url)
 
   private def guess(movieName: String): Unit =
-    if movies.slugsToTitles(movieSlugsShuffled(score)).contains(movieName) then winRound()
+    if movies.slugsToTitles(moviesToGuess(score).slug).contains(movieName) then winRound()
     else lose()
 
-  private def isVictory = score == conf.maxNbOfMoviesPerGame
+  private def isVictory = score == conf.moviesPerGame
 
   private def winRound(): Unit =
     score += 1
