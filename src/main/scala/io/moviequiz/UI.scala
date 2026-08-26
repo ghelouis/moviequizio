@@ -1,5 +1,6 @@
 package io.moviequiz
 
+import io.moviequiz.Translations.t
 import org.scalajs.dom.html.{Button, Div, Image}
 import org.scalajs.dom.window.navigator
 import org.scalajs.dom.{Event, KeyCode, KeyboardEvent, MouseEvent, document, html, window}
@@ -34,7 +35,7 @@ class UI:
     title.classList.add("title")
     document.body.appendChild(title)
 
-    val startButton = createButton("▶", "Play")
+    val startButton = createButton("▶", t("play"))
     document.body.appendChild(startButton)
 
     startButton.addEventListener(
@@ -53,7 +54,7 @@ class UI:
 
     val scoreHeading = document.createElement("h1").asInstanceOf[html.Heading]
     scoreHeading.id = "score"
-    scoreHeading.textContent = s"Score: $score"
+    scoreHeading.textContent = s"${t("score")}: $score"
     document.body.appendChild(scoreHeading)
 
   def renderScreenshot(url: String): Unit =
@@ -85,7 +86,7 @@ class UI:
     container.id = "suggestion-container"
 
     val input = document.createElement("input").asInstanceOf[html.Input]
-    input.placeholder = "Guess the movie..."
+    input.placeholder = t("guess_the_movie")
 
     val clearButton = document.createElement("span").asInstanceOf[html.Span]
     clearButton.title = "Clear"
@@ -194,7 +195,7 @@ class UI:
 
   def refreshScore(newScore: Int): Unit =
     val score = document.getElementById("score")
-    score.textContent = s"Score: $newScore"
+    score.textContent = s"${t("score")}: $newScore"
 
   def clearGuessBox(): Unit =
     val input = document.getElementsByTagName("input").head.asInstanceOf[html.Input]
@@ -217,33 +218,33 @@ class UI:
     container.append(title)
 
     val score = document.createElement("h1")
-    score.textContent = s"Score: $finalScore"
+    score.textContent = s"${t("score")}: $finalScore"
     container.append(score)
 
-    val shareButton = createButton("Share", "Share")
+    val shareButton = createButton(t("share"), t("share"))
     container.append(shareButton)
-    val shareText = s"MovieQuiz.io #$gameDayIndex score: $finalScore"
+    val shareText = s"MovieQuiz.io #$gameDayIndex ${t("score").toLowerCase}: $finalScore"
     shareButton.addEventListener(
       "click",
       (_: Event) =>
         navigator.clipboard.writeText(shareText)
-        shareButton.querySelector(".front").textContent = "Copied!"
+        shareButton.querySelector(".front").textContent = t("copied")
         setTimeout(5000) {
-          shareButton.querySelector(".front").textContent = "Share"
+          shareButton.querySelector(".front").textContent = t("share")
         }
     )
 
     val text = document.createElement("h2").asInstanceOf[html.Heading]
-    text.textContent = "Come back tomorrow for another challenge!"
+    text.textContent = t("come_back_tomorrow_for_another_challenge")
     container.append(text)
 
     document.body.appendChild(container)
 
   def renderVictoryScreen(finalScore: Int, gameDayIndex: Int): Unit =
-    renderEndScreen("YOU WON", finalScore, gameDayIndex)
+    renderEndScreen(t("you_won"), finalScore, gameDayIndex)
 
   def renderFailScreen(finalScore: Int, gameDayIndex: Int): Unit =
-    renderEndScreen("GAME OVER", finalScore, gameDayIndex)
+    renderEndScreen(t("game_over"), finalScore, gameDayIndex)
 
   private def isMobile =
     window.innerWidth < 768
