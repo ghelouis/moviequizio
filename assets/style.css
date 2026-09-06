@@ -171,6 +171,7 @@ h1 {
 }
 
 .pushable {
+  position: relative;
   background: hsl(85deg, 100%, 28%);
   border-radius: 12px;
   border: none;
@@ -180,6 +181,10 @@ h1 {
   transition: filter 600ms;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.pushable.about-button {
+  background: hsl(265deg, 100%, 28%);
 }
 
 .pushable:active .front {
@@ -195,10 +200,23 @@ h1 {
 }
 
 .shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
   filter: blur(4px);
 }
 
 .edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+
   background: linear-gradient(
     to left,
     hsl(85deg 100% 16%) 0%,
@@ -208,9 +226,22 @@ h1 {
   );
 }
 
+.edge.about-button {
+  background: linear-gradient(
+    to left,
+    hsl(265deg 100% 16%) 0%,
+    hsl(265deg 100% 32%) 8%,
+    hsl(265deg 100% 32%) 92%,
+    hsl(265deg 100% 16%) 100%
+  );
+}
+
 .front {
-  display: block;
-  padding: 12px 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0.7rem 2.5rem;
   border-radius: 12px;
   font-size: 1.5rem;
   background: hsl(90deg 100% 38%);
@@ -218,8 +249,32 @@ h1 {
   transform: translateY(-6px);
 }
 
+.front.about-button {
+  font-size: 1.3rem;
+  padding: 1rem 1.5rem;
+  background: hsl(270deg 100% 38%);
+}
+
 .front:hover {
   background: #6dc811;
+}
+
+.front.about-button:hover {
+  background: #8b11c8;
+}
+
+.about-button-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.about {
+  margin: 20px;
 }
 
 .end-container {
@@ -262,6 +317,11 @@ h1 {
 
   .front {
     font-size: 2rem;
+  }
+
+  .front.about-button {
+    font-size: 1rem;
+    padding: 13px 20px 9px;
   }
 }
 

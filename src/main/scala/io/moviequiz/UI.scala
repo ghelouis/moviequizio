@@ -3,7 +3,7 @@ package io.moviequiz
 import io.moviequiz.Translations.t
 import org.scalajs.dom.html.{Button, Div, Image}
 import org.scalajs.dom.window.navigator
-import org.scalajs.dom.{Event, KeyCode, KeyboardEvent, MouseEvent, document, html, window}
+import org.scalajs.dom.{Element, Event, KeyCode, KeyboardEvent, MouseEvent, document, html, window}
 
 import scala.scalajs.js.timers.setTimeout
 
@@ -13,7 +13,19 @@ class UI:
 
   var onGuess: String => Unit = (_: String) => ()
 
-  private def createButton(textContent: String, title: String): Button =
+  var onClear: () => Unit = () => ()
+
+  document.addEventListener(
+    "keydown",
+    (event: KeyboardEvent) =>
+      if event.target.asInstanceOf[Element].tagName != "INPUT" && event.key == "C" then onClear()
+  )
+
+  private def createButton(
+      textContent: String,
+      title: String,
+      className: Option[String] = None
+  ): Button =
     val button = document.createElement("button").asInstanceOf[html.Button]
     button.classList.add("pushable")
     button.title = title
@@ -23,6 +35,11 @@ class UI:
     edge.classList.add("edge")
     val front = document.createElement("span")
     front.classList.add("front")
+    className.foreach(cls =>
+      button.classList.add(cls)
+      edge.classList.add(cls)
+      front.classList.add(cls)
+    )
     front.textContent = textContent
     button.appendChild(shadow)
     button.appendChild(edge)
@@ -38,13 +55,86 @@ class UI:
     val startButton = createButton("▶", t("play"))
     document.body.appendChild(startButton)
 
+    val aboutButtonContainer = document.createElement("div").asInstanceOf[html.Div]
+    aboutButtonContainer.classList.add("about-button-container")
+    val aboutButton = createButton(t("about"), t("about"), Some("about-button"))
+    val closeButton = createButton("X", t("close"), Some("about-button"))
+    closeButton.classList.add("hidden")
+    aboutButtonContainer.append(aboutButton)
+    aboutButtonContainer.append(closeButton)
+    document.body.appendChild(aboutButtonContainer)
+
+    val aboutContainer = createAboutContainer()
+    aboutContainer.classList.add("hidden")
+    document.body.appendChild(aboutContainer)
+
+    def toggleAbout() =
+      title.classList.toggle("hidden")
+      startButton.classList.toggle("hidden")
+      aboutButton.classList.toggle("hidden")
+      closeButton.classList.toggle("hidden")
+      aboutContainer.classList.toggle("hidden")
+
     startButton.addEventListener(
       "click",
       (e: MouseEvent) =>
         title.remove()
         startButton.remove()
+        aboutButtonContainer.remove()
         onStart()
     )
+
+    aboutButton.addEventListener(
+      "click",
+      (e: MouseEvent) => toggleAbout()
+    )
+
+    closeButton.addEventListener(
+      "click",
+      (e: MouseEvent) => toggleAbout()
+    )
+
+  private def createLink(text: String, url: String): html.Link =
+    val link = document.createElement("a").asInstanceOf[html.Link]
+    link.textContent = text
+    link.href = url
+    link
+
+  private def createAboutContainer(): Element =
+    val header = document.createElement("h1").asInstanceOf[html.Heading]
+    header.textContent = t("about")
+
+    val content = document.createElement("p")
+    content.textContent = t("about_content_1")
+
+    val content2 = document.createElement("p")
+    content2.appendChild(document.createTextNode(t("about_content_2")))
+    val sourceCodeLink = createLink(t("about_content_3"), "https://github.com/ghelouis/moviequizio")
+    content2.appendChild(sourceCodeLink)
+    content2.appendChild(document.createTextNode(t("about_content_4")))
+
+    val content3 = document.createElement("p")
+    content3.appendChild(document.createTextNode(t("about_content_5")))
+    val contactLink = createLink("hellothere@moviequiz.io", "mailto:hellothere@moviequiz.io")
+    content3.appendChild(contactLink)
+
+    val sponsorLink = createLink(
+      s"❤️ ${t("support_this_project")}",
+      "https://github.com/sponsors/moviequizio"
+    )
+
+    val content4 = document.createElement("p")
+    content4.textContent = t("about_content_6")
+
+    val aboutContainer = document.createElement("div")
+    aboutContainer.classList.add("about")
+    aboutContainer.appendChild(header)
+    aboutContainer.appendChild(content)
+    aboutContainer.appendChild(content2)
+    aboutContainer.appendChild(content3)
+    aboutContainer.appendChild(sponsorLink)
+    aboutContainer.appendChild(content4)
+    aboutContainer
 
   def renderTitleAndScore(score: Int): Unit =
     val header = document.createElement("h1").asInstanceOf[html.Heading]

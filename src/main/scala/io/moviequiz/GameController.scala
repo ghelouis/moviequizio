@@ -1,5 +1,7 @@
 package io.moviequiz
 
+import org.scalajs.dom
+
 class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, storage: Storage):
 
   private val moviesToGuess =
@@ -12,6 +14,9 @@ class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, st
   def init(): Unit =
     ui.onStart = () => startGame()
     ui.onGuess = movieName => guess(movieName)
+    ui.onClear = () =>
+      storage.clear()
+      dom.window.location.reload()
     storage.getGame(gameDayIndex) match
       case Some(game) if game.gameDayIndex == gameDayIndex =>
         loadGame(game)
