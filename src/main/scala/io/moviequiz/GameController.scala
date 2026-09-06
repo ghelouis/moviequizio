@@ -1,6 +1,7 @@
 package io.moviequiz
 
 import org.scalajs.dom
+import scala.scalajs.js.timers.setTimeout
 
 class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, storage: Storage):
 
@@ -62,8 +63,13 @@ class GameController(conf: Config, movies: Movies, gameDayIndex: Int, ui: UI, st
       storage.saveGame(Game(gameDayIndex, score, true))
     else
       ui.refreshScore(score)
-      ui.clearGuessBox()
-      displayMovie(score)
+      ui.hideGuessBox()
+      ui.showSuccess()
+      setTimeout(700) {
+        displayMovie(score)
+        ui.removeSuccess()
+        ui.showAndClearGuessBox()
+      }
       storage.saveGame(Game(gameDayIndex, score, false))
 
   private def lose(): Unit =

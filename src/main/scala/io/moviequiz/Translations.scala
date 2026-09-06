@@ -48,6 +48,10 @@ object Translations:
       Lang.FR -> "Copié !",
       Lang.EN -> "Copied!"
     ),
+    "correct" -> Map(
+      Lang.FR -> "Correct !",
+      Lang.EN -> "Correct!"
+    ),
     "game_over" -> Map(
       Lang.FR -> "PERDU",
       Lang.EN -> "GAME OVER"

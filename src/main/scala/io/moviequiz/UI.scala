@@ -144,7 +144,10 @@ class UI:
 
     val scoreHeading = document.createElement("h1").asInstanceOf[html.Heading]
     scoreHeading.id = "score"
-    scoreHeading.textContent = s"${t("score")}: $score"
+    scoreHeading.textContent = s"${t("score")}: "
+    val scoreValue = document.createElement("span").asInstanceOf[html.Span]
+    scoreValue.textContent = score.toString
+    scoreHeading.appendChild(scoreValue)
     document.body.appendChild(scoreHeading)
 
   def renderScreenshot(url: String): Unit =
@@ -284,12 +287,31 @@ class UI:
     if !isMobile then input.focus()
 
   def refreshScore(newScore: Int): Unit =
-    val score = document.getElementById("score")
-    score.textContent = s"${t("score")}: $newScore"
+    val score = document.getElementById("score").querySelector("span").asInstanceOf[html.Span]
+    score.textContent = newScore.toString
+    if !isMobile then
+      score.classList.remove("spin")
+      score.offsetWidth
+      score.classList.add("spin")
 
-  def clearGuessBox(): Unit =
+  def hideGuessBox(): Unit =
+    val input = document.getElementsByTagName("input").head
+    input.classList.add("invisible")
+
+  def showSuccess(): Unit =
+    val success = document.createElement("h1")
+    success.id = "success"
+    success.textContent = t("correct")
+    document.body.appendChild(success)
+
+  def removeSuccess(): Unit =
+    val success = document.createElement("h1")
+    document.getElementById("success").remove()
+
+  def showAndClearGuessBox(): Unit =
     val input = document.getElementsByTagName("input").head.asInstanceOf[html.Input]
-    val clearButton = document.getElementsByTagName("span").head.asInstanceOf[html.Span]
+    input.classList.remove("invisible")
+    val clearButton = document.getElementsByTagName("span")(1).asInstanceOf[html.Span]
     clearInput(input, clearButton)
     if !isMobile then input.focus()
 
