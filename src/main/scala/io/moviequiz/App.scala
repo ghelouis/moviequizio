@@ -38,11 +38,11 @@ object App:
           }
     )
 
-  private def getMovies(url: String): Future[Movies] =
+  private def getMovies(url: String): Future[List[Movie]] =
     dom
       .fetch(url)
       .toFuture
       .flatMap(response =>
-        if response.ok then response.text().toFuture.map(Movies.fromJsonText)
+        if response.ok then response.text().toFuture.map(MovieParser.fromJsonText)
         else Future.failed(new Exception(s"HTTP error: ${response.status}"))
       )

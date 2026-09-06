@@ -17,9 +17,6 @@ body {
   flex-direction: column;
   gap: 5vh;
   font-family: sans-serif;
-  background-position: center;
-  background-size: 100% auto;
-  background-repeat: no-repeat;
 }
 
 .bg {
@@ -30,6 +27,18 @@ body {
   z-index: -1;
 }
 
+.img-container {
+  opacity: 0;
+}
+
+.img-container.active {
+  opacity: 1;
+}
+
+.img-container:not(.active) img {
+  display: none;
+}
+
 .bg::after {
   content: '';
   position: absolute;
@@ -37,7 +46,14 @@ body {
   backdrop-filter: blur(15px) brightness(0.6);
 }
 
-img {
+.main {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main img {
   width: 100%;
   max-height: 70vh;
   object-fit: contain;
@@ -58,40 +74,28 @@ h1 {
   font-size: 5rem;
 }
 
-#header {
+#left-header {
   color: #f0f0f0;
   position: fixed;
   top: 10px;
   left: 10px;
 }
 
-#score {
+#right-header {
   color: #f0f0f0;
   position: fixed;
   top: 10px;
   right: 10px;
 }
 
-#score .spin {
-  display: inline-block;
-  animation: spin 0.6s ease-in-out;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-#success {
-  position: fixed;
+.success {
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
   color: #f0f0f0;
-  background-color: rgba(100, 100, 100, 0.7);
-  border-radius: 12px;
-  padding: 15px 20px;
+  background: hsl(90deg 100% 38%);
+  font-size: 3rem;
 }
 
 #suggestion-container {
@@ -139,6 +143,7 @@ h1 {
   transform: translateY(-50%);
   cursor: pointer;
   font-size: 22px;
+  font-weight: bold;
   color: #474747;
   display: none;
   user-select: none;
@@ -291,16 +296,16 @@ h1 {
   right: 20px;
 }
 
-.hidden {
-  display: none;
-}
-
-.invisible {
-  display: none;
-}
-
 .about {
   margin: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
 }
 
 .end-container {
@@ -313,6 +318,7 @@ h1 {
   align-items: center;
   background-color: #f0f0f0;
   flex-direction: column;
+  position: fixed;
 }
 
 .end-container h1,

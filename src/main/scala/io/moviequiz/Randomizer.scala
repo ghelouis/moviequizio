@@ -13,12 +13,9 @@ object Randomizer:
     *     - If needed, swap out repeats with movies from subsequent days of the current epoch. Which gives us
     *       the final list for the current epoch.
     */
-  def getMoviesToGuess(
-      gameDayIndex: Int,
-      movies: Seq[String],
-      moviesPerGame: Int,
-      screenshotsPerMovie: Int
-  ): Seq[MovieToGuess] =
+  def getMoviesToGuess(gameDayIndex: Int, movies: List[Movie], conf: Config): Seq[MovieToGuess] =
+    val moviesPerGame = conf.moviesPerGame
+
     // Compute epoch dynamically
     val daysInEpoch = movies.size / moviesPerGame
     val dayWithinEpoch = gameDayIndex % daysInEpoch
@@ -51,6 +48,14 @@ object Randomizer:
     val startIndex = dayWithinEpoch * moviesPerGame
     val todayBatch = finalEpochMovies.slice(startIndex, startIndex + moviesPerGame)
 
-    // Compute final list of movies to guess (movie + screenshot)
+    // Order by difficulty and compute final list of movies to guess
     val rand = Random(gameDayIndex)
-    todayBatch.map(movie => MovieToGuess(movie, rand.nextInt(screenshotsPerMovie) + 1))
+    todayBatch
+      .sortBy(_.difficulty)
+      .map(movie =>
+        MovieToGuess(
+          movie.slug,
+          movie.titles,
+          rand.nextInt(conf.screenshotsPerMovie) + 1
+        )
+      )
