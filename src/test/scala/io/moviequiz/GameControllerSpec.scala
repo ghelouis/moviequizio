@@ -22,7 +22,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
   private val movieTitles =
     movies.flatMap(movie => movie.titles.map(title => MovieTitle(title, TitleNormalizer.normalize(title))))
 
-  private val conf = Config(cdn = "https://test.cdn.moviequiz.io", nextRoundTimeout = 50)
+  private val conf = Config("https://test.cdn.moviequiz.io", 10, 10, 5, 0)
 
   private val storage = mock[Storage]
 
@@ -42,7 +42,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
       And("we mock the expected UI calls")
       mockWelcomeRendered(ui)
       val renderTitleAndScoreCallHandler = ui.renderTitleAndScore.expects(0)
-      val url = "https://test.cdn.moviequiz.io/images/movie-165/4.avif"
+      val url = "https://test.cdn.moviequiz.io/images/movie-19/4.avif"
       val renderScreenshotCallHandler = ui.renderScreenshot.expects(url, *).onCall { (_, onMovieDisplayed) =>
         onMovieDisplayed()
       }
@@ -86,7 +86,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
     ) {
       Given("a gameController with mocked dependencies")
       val ui = mock[UI]
-      val gameController = GameController(conf.copy(nextRoundTimeout = 0), movies, gameDayIndex, ui, storage)
+      val gameController = GameController(conf, movies, gameDayIndex, ui, storage)
 
       And("no game is returned from storage")
       storage.getGame.expects(gameDayIndex).returns(None)
@@ -96,7 +96,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
       val refreshScoreCallHandler = ui.refreshScore.expects(1)
       val showSuccessCallHandler = (() => ui.showSuccess()).expects()
       val clearGuessBoxCallHandler = (() => ui.clearGuessBox()).expects()
-      val url = "https://test.cdn.moviequiz.io/images/movie-208/1.avif"
+      val url = "https://test.cdn.moviequiz.io/images/movie-84/1.avif"
       val renderScreenshotCallHandler = ui.renderScreenshot.expects(url, *).onCall { (_, onMovieDisplayed) =>
         onMovieDisplayed()
       }
@@ -105,7 +105,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
 
       When("we init the game and invoke ui.onGuess() with a correct answer")
       gameController.init()
-      ui.onGuess("Le Movie 165")
+      ui.onGuess("Le Movie 19")
 
       Then("the score should have been refreshed, guess box cleared, screenshot rendered and game saved")
       refreshScoreCallHandler.once()
@@ -148,7 +148,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
 
       And("we mock the expected UI calls")
       ui.addListener.expects(*)
-      val url = "https://test.cdn.moviequiz.io/images/movie-17/4.avif"
+      val url = "https://test.cdn.moviequiz.io/images/movie-20/5.avif"
       val renderScreenshotCallHandler = ui.renderScreenshot.expects(url, *).onCall { (_, onMovieDisplayed) =>
         onMovieDisplayed()
       }
@@ -162,7 +162,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
       renderVictoryScreenCallHandler.once()
     }
 
-    it("should load the game properly if returned from storage for a defeat with a 0 score") {
+    it("should load the game properly if returned from storage for a defeat with a 0 score victory") {
       Given("a gameController with mocked dependencies")
       val ui = mock[UI]
       val gameController = GameController(conf, movies, gameDayIndex, ui, storage)
@@ -173,7 +173,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
 
       And("we mock the expected UI calls")
       ui.addListener.expects(*)
-      val url = "https://test.cdn.moviequiz.io/images/movie-165/4.avif"
+      val url = "https://test.cdn.moviequiz.io/images/movie-19/4.avif"
       val renderScreenshotCallHandler = ui.renderScreenshot.expects(url, *).onCall { (_, onMovieDisplayed) =>
         onMovieDisplayed()
       }
@@ -198,7 +198,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
 
       And("we mock the expected UI calls")
       ui.addListener.expects(*)
-      val url = "https://test.cdn.moviequiz.io/images/movie-208/1.avif"
+      val url = "https://test.cdn.moviequiz.io/images/movie-84/1.avif"
       val renderScreenshotCallHandler = ui.renderScreenshot.expects(url, *).onCall { (_, onMovieDisplayed) =>
         onMovieDisplayed()
       }
@@ -223,7 +223,7 @@ class GameControllerSpec extends AnyFunSpec with GivenWhenThen with MockFactory:
 
       And("we mock the expected UI calls")
       ui.addListener.expects(*)
-      val url = "https://test.cdn.moviequiz.io/images/movie-208/1.avif"
+      val url = "https://test.cdn.moviequiz.io/images/movie-84/1.avif"
       val renderScreenshotCallHandler = ui.renderScreenshot.expects(url, *).onCall { (_, onMovieDisplayed) =>
         onMovieDisplayed()
       }
