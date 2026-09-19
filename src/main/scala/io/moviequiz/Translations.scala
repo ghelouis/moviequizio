@@ -1,5 +1,6 @@
 package io.moviequiz
 
+import org.scalajs.dom.document
 import org.scalajs.dom.window.navigator
 
 object Translations:
