@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
   "org.scalamock" %% "scalamock" % "7.5.5" % Test
 )
 
-Compile / fullLinkJS / scalaJSLinkerConfig ~= {
+scalaJSLinkerConfig ~= {
   _.withSourceMap(false)
 }
 
