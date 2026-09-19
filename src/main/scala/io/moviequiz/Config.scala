@@ -2,6 +2,8 @@ package io.moviequiz
 
 case class Config(
     cdn: String = "https://cdn.moviequiz.io",
-    maxNbOfMoviesPerGame: Int = 10,
-    nbOfScreenshotsPerMovie: Int = 3
+    moviesPerGame: Int = 10,
+    screenshotsPerMovie: Int = 10,
+    maxSearchResults: Int = 5,
+    nextRoundTimeout: Int = 300
 )
