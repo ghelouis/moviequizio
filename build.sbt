@@ -13,7 +13,8 @@ scalaJSUseMainModuleInitializer := true
 libraryDependencies ++= Seq(
   "org.scala-js" %% "scalajs-dom" % "2.8.1",
   "org.scalatest" %% "scalatest-funspec" % "3.2.20" % Test,
-  "org.scalamock" %% "scalamock" % "7.5.5" % Test
+  "org.scalamock" %% "scalamock" % "7.6.0" % Test,
+  "org.scalamock" %% "scalamock-scalatest" % "7.6.0" % Test
 )
 
 scalaJSLinkerConfig ~= {
